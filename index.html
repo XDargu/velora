@@ -56,19 +56,25 @@
         gap: 10px;
         font-weight: 780;
         letter-spacing: -0.03em;
-        font-size: 20px;
+        font-size: 24px;
     }
 
     .logo {
-        width: 36px;
-        height: 36px;
-        border-radius: 11px;
+        width: 48px;
+        height: 48px;
+        /*border-radius: 11px;
         background: linear-gradient(135deg, #2563eb, #1e40af);
         box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
         display: grid;
         place-items: center;
         color: white;
-        font-weight: 900;
+        font-weight: 900;*/
+        background-image: url("logo.png");
+        background-size: contain;
+    }
+
+    .title-highlight {
+        color: #6941c6;
     }
 
     .nav-note {
@@ -167,6 +173,7 @@
     .live-analysis {
         min-width: 0;
         display: grid;
+        align-items: center;
         gap: 10px;
     }
 
@@ -257,6 +264,7 @@
     .signal.purple { background: #f4f3ff; border-color: #d9d6fe; color: #5925dc; }
 
     .metric-grid {
+        display: none !important;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 8px;
@@ -611,8 +619,8 @@
 <main class="page">
     <header class="nav">
         <div class="brand">
-            <div class="logo">A</div>
-            <span>VeloraAI</span>
+            <div class="logo"></div>
+            <span>Sprint<span class="title-highlight">Oracle</span></span>
         </div>
         <div class="nav-note">Private beta · Delivery intelligence platform</div>
     </header>
@@ -620,7 +628,7 @@
     <section class="hero">
         <div class="badge"><span class="badge-dot"></span> AI-assisted delivery forecasting</div>
         <h1>Smarter forecasts for engineering teams.</h1>
-        <p class="sub">Describe a task, feature, bug, or technical initiative. VeloraAI evaluates scope, complexity, risk, and uncertainty to produce an accurate forecast</p>
+        <p class="sub">Describe a task, feature, bug, or technical initiative. Sprint Oracle uses AI* to evaluates scope, complexity, risk, and uncertainty to produce an accurate forecast</p>
     </section>
 
     <section class="panel">
@@ -638,7 +646,7 @@
                         <span class="signal">No scope detected yet</span>
                     </div>
                 </div>
-
+                <button id="estimateBtn" class="estimate" disabled>Estimate</button>
                 <div class="metric-grid">
                     <div class="metric">
                         <span class="metric-label">Scope</span>
@@ -653,10 +661,6 @@
                         <span class="metric-value" id="confidenceMetric">—</span>
                     </div>
                 </div>
-            </div>
-
-            <div class="footer-row">
-                <button id="estimateBtn" class="estimate" disabled>Estimate</button>
             </div>
         </div>
     </section>
