@@ -1193,7 +1193,7 @@ function chooseEstimate() {
         "It depends"
     ];
 
-    if (!analysis.text) return pick(estimates);
+    /*if (!analysis.text) */return pick(estimates);
 
     if (analysis.riskScore >= 8 || analysis.complexityScore >= 9) {
         return pick(["6 weeks", "1 quarter", "TBD", "It depends"]);
