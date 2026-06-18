@@ -815,7 +815,6 @@ const confidenceLines = [
     "The spirits remain strangely silent on this one",
     "One engineer reported seeing a bad omen",
     "The backlog resisted divination",
-    "Estimate generated under a waxing moon",
     "Scope creep detected in the astral plane",
     "Additional requirements may materialize spontaneously",
     "The ritual was interrupted by a production incident",
@@ -989,6 +988,22 @@ const taskTypes = [
 let timers = [];
 let currentAnalysis = null;
 let analysisTimer = null;
+
+function hashString(str) {
+    let hash = 2166136261;
+
+    for (let i = 0; i < str.length; i++) {
+        hash ^= str.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+    }
+
+    return hash >>> 0;
+}
+
+function pickDeterministic(list, seed, salt = "") {
+    const hash = hashString(`${seed}|${salt}`);
+    return list[hash % list.length];
+}
 
 function pick(list) {
     return list[Math.floor(Math.random() * list.length)];
@@ -1181,19 +1196,41 @@ function chooseEstimate() {
     const analysis = currentAnalysis || analyseTask(taskInput.value);
 
     const estimates = [
+        "1 hour",
+        "4 hours",
+        "6 hours",
+        "1 day",
         "2 days",
         "3 days",
         "4 days",
         "1 week",
         "2 weeks",
         "3 weeks",
+        "4 weeks",
+        "5 weeks",
         "6 weeks",
+        "1 month",
+        "2 months",
+        "3 months",
+        "4 months",
         "1 quarter",
-        "TBD",
-        "It depends"
+        "1 year",
+        "10 years",
+        
+        "5 leap years",
+
+        "One coffee break",
+        "Two coffee breaks",
+        "One lunch break",
+        "A long lunch break",
+        "One afternoon",
+
+        "A sprint",
+        "Two sprints",
+        "One fiscal year",
     ];
 
-    /*if (!analysis.text) */return pick(estimates);
+    /*if (!analysis.text) */return pickDeterministic(estimates, analysis.text, "estimate");
 
     if (analysis.riskScore >= 8 || analysis.complexityScore >= 9) {
         return pick(["6 weeks", "1 quarter", "TBD", "It depends"]);
@@ -1228,7 +1265,8 @@ function startReveal() {
     modal.classList.add("active");
     videoFallback.classList.remove("show");
 
-    const clip = pick(clips);
+    const seed = taskInput.value.toLowerCase().trim();
+    const clip = pickDeterministic(clips, seed, "clip");
     oracleVideo.src = clip;
     oracleVideo.currentTime = 0;
     oracleVideo.play().catch(() => {
@@ -1360,7 +1398,7 @@ function startReveal() {
 
     timers.push(setTimeout(() => {
         estimateValue.textContent = chooseEstimate();
-        confidence.textContent = pick(confidenceLines);
+        confidence.textContent = pickDeterministic(confidenceLines, seed, "confidence");
         estimateValue.classList.add("visible");
         confidence.classList.add("visible");
         processEl.textContent = "Forecast complete";
