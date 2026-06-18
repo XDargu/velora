@@ -642,6 +642,76 @@
         }
     }
 
+    @keyframes autoClick {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(0.95);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes summonGlow {
+        0% {
+            box-shadow: 0 0 0 rgba(37,99,235,0);
+        }
+
+        50% {
+            box-shadow: 0 0 40px rgba(37,99,235,0.8);
+        }
+
+        100% {
+            box-shadow: 0 0 0 rgba(37,99,235,0);
+        }
+    }
+
+    @keyframes oracleFocus {
+        0% {
+            box-shadow: 0 0 0 rgba(37,99,235,0);
+            transform: scale(1);
+        }
+
+        50% {
+            box-shadow:
+                0 0 20px rgba(37,99,235,0.8),
+                0 0 60px rgba(37,99,235,0.5),
+                0 0 120px rgba(37,99,235,0.25);
+            transform: scale(1.04);
+        }
+
+        100% {
+            box-shadow:
+                0 0 30px rgba(37,99,235,1),
+                0 0 80px rgba(37,99,235,0.7);
+            transform: scale(1.06);
+        }
+    }
+
+    @keyframes oracleClick {
+        0%   { transform: scale(1.06); }
+        50%  { transform: scale(0.92); }
+        100% { transform: scale(1.0); }
+    }
+
+    .estimate.oracle-focus {
+        animation: oracleFocus 1.8s ease forwards;
+    }
+
+    .estimate.oracle-click {
+        animation: oracleClick 220ms ease;
+    }
+
+    .estimate.auto-click {
+        animation:
+            summonGlow 700ms ease,
+            autoClick 250ms ease 450ms;
+    }
+
     .share-row {
         height: 0;
         gap: 10px;
@@ -741,13 +811,6 @@
             <video id="oracleVideo" autoplay muted playsinline preload="auto"></video>
 
             <div class="video-fallback" id="videoFallback">
-                <div class="fallback-card">
-                    <h2>Video clip missing</h2>
-                    <p>
-                        Add one or more MP4 files in a <b>videos</b> folder next to this HTML file.
-                        The reveal is already wired for palm reading, tarot, astrology, and ritual-style clips.
-                    </p>
-                </div>
             </div>
 
             <div class="overlay"></div>
@@ -1476,7 +1539,7 @@ function getShareText() {
     const estimate = estimateValue.textContent || "It depends";
     const line = confidence.textContent || "The estimation bones remain uncertain";
 
-    return `SprintOracle has spoken: ${estimate}.\n${line}\n\n${createShareUrl()}`;
+    return `SprintOracle has spoken: ${estimate}.\n${line}\n\n"https://www.sprintoracle.com/"`;
 }
 
 shareBtn.addEventListener("click", async () => {
@@ -1514,8 +1577,70 @@ function getInitialTaskFromUrl() {
 
 const initialTask = getInitialTaskFromUrl();
 
+async function playSharedTaskAnimation(text) {
+    taskInput.value = "";
+
+    estimateBtn.disabled = true;
+
+    for (let i = 0; i < text.length; i++) {
+        taskInput.value += text[i];
+
+        clearTimeout(analysisTimer);
+
+        showAnalysisSpinner();
+
+        const delayAnalysis = 300 + Math.random() * 500;
+
+        analysisTimer = setTimeout(() => {
+            updateLiveAnalysis();
+        }, delayAnalysis);
+
+        const progress = i / (text.length - 1);
+
+        let delay =
+            8 +
+            20 * Math.pow(1 - progress, 2.5) +
+            Math.random() * 6;
+
+        if (text[i] === " ") {
+            delay += 40;
+        }
+
+        await new Promise(resolve =>
+            setTimeout(resolve, delay)
+        );
+    }
+
+    await new Promise(resolve =>
+        setTimeout(resolve, 800)
+    );
+
+    estimateBtn.classList.add("oracle-focus");
+
+    await new Promise(resolve =>
+        setTimeout(resolve, 1800)
+    );
+
+    /*estimateBtn.classList.remove("oracle-focus");
+    estimateBtn.classList.add("oracle-click");
+
+    await new Promise(resolve =>
+        setTimeout(resolve, 250)
+    );
+
+    estimateBtn.classList.remove("oracle-click");
+
+    await new Promise(resolve =>
+        setTimeout(resolve, 300)
+    );
+
+    startReveal();*/
+}
+
 if (initialTask) {
-    taskInput.value = initialTask;
+    playSharedTaskAnimation(initialTask);
+} else {
+    updateLiveAnalysis();
 }
 
 updateLiveAnalysis();
